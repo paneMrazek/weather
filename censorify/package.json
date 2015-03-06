@@ -1,0 +1,9 @@
+{
+	"name" : "censorify",
+	"author" : "Alex Mills",
+	"version": "0.1.0",
+	"description": "Censors words out of text",
+	"main": "censortext",
+	"dependencies": {},
+	"engines": {"node":"*"}
+}

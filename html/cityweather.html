@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<title>City Weather</title>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	</head>
+	<body>
+		<form>
+			Enter a Utah City:<input id="cityfield" type="text" value=""><br>
+			Suggestions: (hint - click on city name to select)<br>
+
+			<span id="sug_span">Empty</span><br>
+			<input type="submit" value="Submit" id="button">
+		</form><br>
+		<textarea id="cityName" rows="5" col="25">
+			
+		</textarea>
+		<br>
+		<p>Current Weather</p>
+		<div id="weather">No Weather Information</div>
+		<script>
+			function upper1(p){
+				p = p[0].toUpperCase() + p.substr(1,p.length);
+				return p;
+			}
+
+			$("#button").click(function(e){
+				var value = $("#cityfield").val();
+				console.log(value);
+				$("#cityName").text(value);
+				e.preventDefault();
+
+				var weatherurl = "https://api.wunderground.com/api/306a317aece03d63/geolookup/conditions/q/UT/";
+				 weatherurl += value + ".json";
+				 $.ajax({
+				 	url: weatherurl,
+				 	dataType: "jsonp",
+				 	success: function(pjson){
+				 		console.log(pjson);
+				 		var everything = "<div>"+pjson['location']['city']+", "+ pjson['location']['state']+"</div>";
+				 		everything+="<table style='width:400px'><tr><td>Temperature</td><td>"+pjson['current_observation']['temperature_string']+"</td></tr><tr><td>Wind</td><td>"+ pjson['current_observation']['wind_string']+"</td></tr><tr><td>Sky</td><td>"+pjson['current_observation']['weather']+"</td></tr></table>";
+				 		$('#weather').html(everything);
+				 	}
+				 });
+			});
+
+			$( "#cityfield" ).keyup(function() {
+				var url = "http://52.10.212.104:8080/getcity?q="+upper1($("#cityfield").val());
+				$.getJSON(url,function(data) {
+					var everything;
+					everything = "<ul>";
+					$.each(data, function(i,item) {
+						//everything += '<li>'+data[i].city;
+						everything += "<li onclick=\"document.getElementById(\'cityfield\').value = \'"+data[i].city+"\'\">" + data[i].city;
+					});
+					everything += "</ul>";
+						$("#sug_span").html(everything);
+				})
+				.done(function() { console.log('getJSON request succeeded!'); })
+				.fail(function(jqXHR, textStatus, errorThrown) { 
+					console.log('getJSON request failed! ' + textStatus); 
+					console.log("incoming "+jqXHR.responseText);
+			  	})
+				.always(function() { console.log('getJSON request ended!');
+				})
+			  	.complete(function() { console.log("complete"); });
+			});
+		</script>
+	</body>
+</html>
+
+<!-- 306a317aece03d63 -->

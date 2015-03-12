@@ -4,20 +4,51 @@
 		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 	</head>
 	<body>
-		<form>
-			Enter a Utah City:<input id="cityfield" type="text" value=""><br>
-			Suggestions: (hint - click on city name to select)<br>
+		<div style="width:50%; float:left;display:inline-block;">
+			<form>
+				Enter a Utah City:<input id="cityfield" type="text" value=""><br>
+				Suggestions: (hint - click on city name to select)<br>
 
-			<span id="sug_span">Empty</span><br>
-			<input type="submit" value="Submit" id="button">
-		</form><br>
-		<textarea id="cityName" rows="5" col="25">
+				<span id="sug_span">Empty</span><br>
+				<input type="submit" value="Submit" id="button">
+			</form><br>
+			<textarea id="cityName" rows="5" col="25">
 			
-		</textarea>
-		<br>
-		<p>Current Weather</p>
-		<div id="weather">No Weather Information</div>
+			</textarea>
+			<br>
+			<p>Current Weather</p>
+			<div id="weather">No Weather Information</div>
+		</div>
+		<div style="width:50%; float:left; display:inline-block;">
+			<form id="commentForm" action="">
+				Name: <input type="text" id="Name" value="">
+				Comment: <input type="text" id="Comment" value="">
+			</form>
+			<button id="jsonButton">Serialize form values</button>
+			<div id="json"></div>
+			<div id="status"></div>
+			<div id="currentComments"></div>
+		</div>
 		<script>
+			$('#jsonButton').click(function(){
+				var myobj = {Name:$('#Name').val(),Comment:$('#Comment').val()};
+				jobj = JSON.stringify(myobj);
+				$('#json').text(jobj);
+				$.post('http://52.10.212.104:8080/comment', jobj, function(data, textStatus){
+					$('#status').append(textStatus);
+				});
+				$.get('http://52.10.212.104:8080/comment',function(data){
+					var everything;
+					data = JSON.parse(data);
+					everything = "Current Comments:<br><ul>";
+					$.each(data, function(i,item){
+						everything += "<li>Name: " + data[i].Name+" Comment: "+ data[i].Comment;
+					});
+					everything += "</ul>";
+					$("#currentComments").html(everything);
+				});		
+			});
+
 			function upper1(p){
 				p = p[0].toUpperCase() + p.substr(1,p.length);
 				return p;

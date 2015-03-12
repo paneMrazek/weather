@@ -24,7 +24,8 @@
 				Name: <input type="text" id="Name" value="">
 				Comment: <input type="text" id="Comment" value="">
 			</form>
-			<button id="jsonButton">Serialize form values</button>
+			<button id="jsonButton">Submit Comments</button>
+			<button id="getComments">Get Comments</button>
 			<div id="json"></div>
 			<div id="status"></div>
 			<div id="currentComments"></div>
@@ -34,10 +35,12 @@
 				var myobj = {Name:$('#Name').val(),Comment:$('#Comment').val()};
 				jobj = JSON.stringify(myobj);
 				$('#json').text(jobj);
-				$.post('http://52.10.212.104:8080/comment', jobj, function(data, textStatus){
-					$('#status').append(textStatus);
+				$.post('http://52.10.212.104/comment', jobj, function(data, textStatus){
+					$('#status').text(textStatus);
 				});
-				$.get('http://52.10.212.104:8080/comment',function(data){
+			});
+			$('#getComments').click(function(){
+				$.get('http://52.10.212.104/comment',function(data){
 					var everything;
 					data = JSON.parse(data);
 					everything = "Current Comments:<br><ul>";

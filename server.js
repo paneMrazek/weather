@@ -1,5 +1,5 @@
 var http = require("http"), fs = require("fs");
-var port = 8080;
+var port = 80;
 var ROOT_DIR = "html";
 var url = require("url");
 var MongoClient = require('mongodb').MongoClient;

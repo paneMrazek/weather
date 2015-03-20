@@ -35,21 +35,66 @@
 				var myobj = {Name:$('#Name').val(),Comment:$('#Comment').val()};
 				jobj = JSON.stringify(myobj);
 				$('#json').text(jobj);
-				$.post('http://52.10.212.104/comment', jobj, function(data, textStatus){
-					$('#status').text(textStatus);
+
+				jQuery.ajax({
+					url:'http://52.10.212.104/comment',
+					method:"POST",
+					data: jobj,
+					dataType: "json",
+					contentType:"application/json; charset=utf-8",
+					statusCode: {
+						404: function(){
+							alert("not found");
+						},
+						200: function(){
+							$('#status').text("Success");
+						},
+						304: function(){
+							alert("something");
+						}
+					}
+				});
+				jQuery.ajax({
+					url:'https://52.10.212.104/comment',
+					method:"POST",
+					data: jobj,
+					dataType: "json",
+					contentType:"application/json; charset=utf-8",
+					statusCode: {
+						404: function(){
+							alert("not found");
+						},
+						200: function(){
+							$('#status').text("Success");
+						},
+						304: function(){
+							alert("something");
+						}
+					}
 				});
 			});
+
 			$('#getComments').click(function(){
 				$.get('http://52.10.212.104/comment',function(data){
 					var everything;
-					data = JSON.parse(data);
+					// data = JSON.parse(data);
 					everything = "Current Comments:<br><ul>";
 					$.each(data, function(i,item){
 						everything += "<li>Name: " + data[i].Name+" Comment: "+ data[i].Comment;
 					});
 					everything += "</ul>";
 					$("#currentComments").html(everything);
-				});		
+				});	
+				$.get('https://52.10.212.104/comment',function(data){
+					var everything;
+					// data = JSON.parse(data);
+					everything = "Current Comments:<br><ul>";
+					$.each(data, function(i,item){
+						everything += "<li>Name: " + data[i].Name+" Comment: "+ data[i].Comment;
+					});
+					everything += "</ul>";
+					$("#currentComments").html(everything);
+				});	
 			});
 
 			function upper1(p){
@@ -78,8 +123,29 @@
 			});
 
 			$( "#cityfield" ).keyup(function() {
-				var url = "http://52.10.212.104:8080/getcity?q="+upper1($("#cityfield").val());
+				var url = "http://52.10.212.104/getcity?q="+upper1($("#cityfield").val());
 				$.getJSON(url,function(data) {
+					var everything;
+					everything = "<ul>";
+					$.each(data, function(i,item) {
+						//everything += '<li>'+data[i].city;
+						everything += "<li onclick=\"document.getElementById(\'cityfield\').value = \'"+data[i].city+"\'\">" + data[i].city;
+					});
+					everything += "</ul>";
+						$("#sug_span").html(everything);
+				})
+				.done(function() { console.log('getJSON request succeeded!'); })
+				.fail(function(jqXHR, textStatus, errorThrown) { 
+					console.log('getJSON request failed! ' + textStatus); 
+					console.log("incoming "+jqXHR.responseText);
+			  	})
+				.always(function() { console.log('getJSON request ended!');
+				})
+			  	.complete(function() { console.log("complete"); });
+
+
+			  	var urls = "https://52.10.212.104/getcity?q="+upper1($("#cityfield").val());
+				$.getJSON(urls,function(data) {
 					var everything;
 					everything = "<ul>";
 					$.each(data, function(i,item) {
